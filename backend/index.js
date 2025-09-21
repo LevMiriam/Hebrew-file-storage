@@ -25,13 +25,12 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
-// Serve frontend static build (for Railway)
+// API Routes first (before static serving)
+
+// Serve frontend static build (for Railway) - AFTER API routes
 const frontendBuildPath = path.join(__dirname, 'build');
 if (fs.existsSync(frontendBuildPath)) {
   app.use(express.static(frontendBuildPath));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendBuildPath, 'index.html'));
-  });
 }
 
 // Create uploads directory if it doesn't exist
@@ -356,6 +355,13 @@ app.delete('/api/files/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'File deletion failed' });
   }
 });
+
+// Serve frontend for all non-API routes (catch-all route)
+if (fs.existsSync(frontendBuildPath)) {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendBuildPath, 'index.html'));
+  });
+}
 
 // Start server
 async function startServer() {
