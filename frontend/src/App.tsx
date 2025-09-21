@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
-const API_URL = process.env.REACT_APP_API_URL || (window.location.origin.includes('localhost') ? 'http://localhost:3001' : '');
+const API_URL = process.env.REACT_APP_API_URL || (window.location.origin.includes('localhost') ? 'http://localhost:4001' : '');
 
 interface User {
   id: number;
@@ -31,6 +31,14 @@ const App: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Auto-hide message after 3 seconds
+  const showMessage = (msg: string) => {
+    setMessage(msg);
+    setTimeout(() => {
+      setMessage('');
+    }, 3000);
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
@@ -48,14 +56,13 @@ const App: React.FC = () => {
       setFiles(response.data.files);
     } catch (error) {
       console.error('Error loading files:', error);
-      setMessage('שגיאה בטעינת הקבצים');
+      showMessage('שגיאה בטעינת הקבצים');
     }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setMessage('');
 
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, {
@@ -70,10 +77,10 @@ const App: React.FC = () => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       setUser(userData);
-      setMessage('התחברת בהצלחה!');
+      showMessage('התחברת בהצלחה!');
       loadFiles();
     } catch (error: any) {
-      setMessage(error.response?.data?.error || 'שגיאה בהתחברות');
+      showMessage(error.response?.data?.error || 'שגיאה בהתחברות');
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +89,6 @@ const App: React.FC = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setMessage('');
 
     try {
       const response = await axios.post(`${API_URL}/api/auth/register`, {
@@ -98,10 +104,10 @@ const App: React.FC = () => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       setUser(userData);
-      setMessage('נרשמת בהצלחה!');
+      showMessage('נרשמת בהצלחה!');
       loadFiles();
     } catch (error: any) {
-      setMessage(error.response?.data?.error || 'שגיאה ברישום');
+      showMessage(error.response?.data?.error || 'שגיאה ברישום');
     } finally {
       setIsLoading(false);
     }
@@ -113,7 +119,7 @@ const App: React.FC = () => {
     delete axios.defaults.headers.common['Authorization'];
     setUser(null);
     setFiles([]);
-    setMessage('התנתקת בהצלחה');
+    showMessage('התנתקת בהצלחה');
     setUsername('');
     setEmail('');
     setPassword('');
@@ -124,7 +130,6 @@ const App: React.FC = () => {
     if (!file) return;
 
     setIsLoading(true);
-    setMessage('');
 
     const formData = new FormData();
     formData.append('file', file);
@@ -136,13 +141,13 @@ const App: React.FC = () => {
         },
       });
 
-      setMessage('הקובץ הועלה בהצלחה!');
+      showMessage('הקובץ הועלה בהצלחה!');
       loadFiles();
       
       // Reset file input
       e.target.value = '';
     } catch (error: any) {
-      setMessage(error.response?.data?.error || 'שגיאה בהעלאת הקובץ');
+      showMessage(error.response?.data?.error || 'שגיאה בהעלאת הקובץ');
     } finally {
       setIsLoading(false);
     }
@@ -164,7 +169,7 @@ const App: React.FC = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error: any) {
-      setMessage('שגיאה בהורדת הקובץ');
+      showMessage('שגיאה בהורדת הקובץ');
     }
   };
 
@@ -175,10 +180,10 @@ const App: React.FC = () => {
 
     try {
       await axios.delete(`${API_URL}/api/files/${fileId}`);
-      setMessage('הקובץ נמחק בהצלחה');
+      showMessage('הקובץ נמחק בהצלחה');
       loadFiles();
     } catch (error: any) {
-      setMessage('שגיאה במחיקת הקובץ');
+      showMessage('שגיאה במחיקת הקובץ');
     }
   };
 
