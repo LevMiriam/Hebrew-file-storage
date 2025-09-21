@@ -11,13 +11,13 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Set production environment for Railway
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
 // Database connection
 const pool = new Pool({
-  user: process.env.DB_USER || 'fileapp',
-  host: process.env.DB_HOST || 'postgres',
-  database: process.env.DB_NAME || 'fileapp',
-  password: process.env.DB_PASSWORD || 'password123',
-  port: process.env.DB_PORT || 5432,
+  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 // Middleware
@@ -25,12 +25,13 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
-// API Routes first (before static serving)
-
-// Serve frontend static build (for Railway) - AFTER API routes
+// Serve frontend static build (for Railway)
 const frontendBuildPath = path.join(__dirname, 'build');
 if (fs.existsSync(frontendBuildPath)) {
   app.use(express.static(frontendBuildPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendBuildPath, 'index.html'));
+  });
 }
 
 // Create uploads directory if it doesn't exist
@@ -112,7 +113,7 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: 'Access token required' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret', (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET || 'railway-jwt-secret-key-2025', (err, user) => {
     if (err) {
       return res.status(403).json({ error: 'Invalid token' });
     }
@@ -162,7 +163,7 @@ app.post('/api/auth/register', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, username: user.username },
-      process.env.JWT_SECRET || 'fallback-secret',
+      process.env.JWT_SECRET || 'railway-jwt-secret-key-2025',
       { expiresIn: '24h' }
     );
 
@@ -208,7 +209,7 @@ app.post('/api/auth/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, username: user.username },
-      process.env.JWT_SECRET || 'fallback-secret',
+      process.env.JWT_SECRET || 'railway-jwt-secret-key-2025',
       { expiresIn: '24h' }
     );
 
@@ -355,13 +356,6 @@ app.delete('/api/files/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'File deletion failed' });
   }
 });
-
-// Serve frontend for all non-API routes (catch-all route)
-if (fs.existsSync(frontendBuildPath)) {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendBuildPath, 'index.html'));
-  });
-}
 
 // Start server
 async function startServer() {
