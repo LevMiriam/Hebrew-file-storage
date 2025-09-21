@@ -1,35 +1,31 @@
-# Multi-stage build for Railway deployment
+
+# Railway-optimized Dockerfile: build backend & frontend, serve static from backend
 FROM node:18-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files for backend
+# Install backend dependencies
 COPY backend/package*.json ./backend/
 RUN cd backend && npm ci --only=production
 
 # Copy backend source
 COPY backend/ ./backend/
 
-# Copy package files for frontend
+# Install frontend dependencies and build
 COPY frontend/package*.json ./frontend/
 RUN cd frontend && npm ci
-
-# Copy frontend source and build
 COPY frontend/ ./frontend/
 RUN cd frontend && npm run build
 
-# Install serve globally
-RUN npm install -g serve
-
-# Copy docker-compose file
-COPY docker-compose.yml ./
+# Copy frontend build to backend for static serving
+RUN mkdir -p backend/build && cp -r frontend/build/* backend/build/
 
 # Create uploads directory
 RUN mkdir -p uploads
 
-# Expose ports
-EXPOSE 3000 3001 5432
+# Expose only backend port
+EXPOSE 3001
 
-# Default command - will be overridden by Railway
+# Start backend
 CMD ["node", "backend/index.js"]
