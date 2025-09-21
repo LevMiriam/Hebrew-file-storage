@@ -3,10 +3,5 @@
   "build": {
     "builder": "DOCKERFILE",
     "dockerfilePath": "Dockerfile"
-  },
-  "deploy": {
-    "startCommand": "docker-compose up",
-    "healthcheckPath": "/api/health",
-    "healthcheckTimeout": 100
-  }
+    }
 }
