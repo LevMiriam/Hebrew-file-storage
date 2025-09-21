@@ -194,7 +194,7 @@ const App: React.FC = () => {
     return (
       <div className="app">
         <div className="auth-container">
-          <h1>🗂️ אחסון קבצים</h1>
+          <h1>אחסון קבצים מתקדם</h1>
           
           <div className="auth-tabs">
             <button 
@@ -265,7 +265,7 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <header className="header">
-        <h1>🗂️ אחסון קבצים</h1>
+        <h1>אחסון קבצים מתקדם</h1>
         <div className="user-info">
           <span>שלום, {user.username}!</span>
           <button onClick={handleLogout} className="logout-btn">התנתק</button>
@@ -275,7 +275,7 @@ const App: React.FC = () => {
       <main className="main">
         <div className="upload-section">
           <h2>העלאת קובץ חדש</h2>
-          <p className="hebrew-support-note">✨ תמיכה מלאה בשמות קבצים בעברית!</p>
+          <p className="hebrew-support-note">תמיכה מלאה בשמות קבצים בעברית</p>
           <input
             type="file"
             onChange={handleFileUpload}
