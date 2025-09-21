@@ -18,6 +18,12 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  // Fallback to individual env vars for local docker
+  user: process.env.DB_USER || 'fileapp',
+  host: process.env.DB_HOST || 'postgres',  
+  database: process.env.DB_NAME || 'fileapp',
+  password: process.env.DB_PASSWORD || 'password123',
+  port: process.env.DB_PORT || 5432,
 });
 
 // Middleware

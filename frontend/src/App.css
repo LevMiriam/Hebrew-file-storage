@@ -1,6 +1,6 @@
 .app {
   min-height: 100vh;
-  background: linear-gradient(135deg, #e6f7ff 0%, #b3f0ff 50%, #80e8ff 100%);
+  background: #ffffff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Noto Sans Hebrew', 'Arial Hebrew';
   direction: rtl;
   text-align: right;
@@ -8,13 +8,13 @@
 
 /* Header */
 .header {
-  background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+  background: linear-gradient(135deg, #aedf96 0%, #aedf96 100%);
   color: white;
   padding: 1.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 20px rgba(24, 144, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(82, 196, 26, 0.3);
   backdrop-filter: blur(10px);
 }
 
@@ -64,8 +64,8 @@
 .auth-container h1 {
   text-align: center;
   margin-bottom: 2.5rem;
-  color: #1890ff;
-  font-size: 2.2rem;
+  color: #000000;
+  font-size: 1.8rem;
   font-weight: 700;
 }
 
@@ -74,8 +74,8 @@
   margin-bottom: 2.5rem;
   border-radius: 15px;
   overflow: hidden;
-  border: 1px solid rgba(24, 144, 255, 0.2);
-  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(82, 196, 26, 0.3);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .tab {
@@ -87,17 +87,17 @@
   transition: all 0.3s ease;
   font-size: 1.1rem;
   font-weight: 500;
-  color: #1890ff;
+  color: #000000;
 }
 
 .tab.active {
-  background: linear-gradient(135deg, #40a9ff, #1890ff);
+  background: linear-gradient(135deg, #aedf96, #aedf96);
   color: white;
-  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(82, 196, 26, 0.4);
 }
 
 .tab:hover:not(.active) {
-  background: rgba(24, 144, 255, 0.1);
+  background: rgba(82, 196, 26, 0.15);
   transform: translateY(-1px);
 }
 
@@ -110,27 +110,27 @@
   display: block;
   margin-bottom: 0.7rem;
   font-weight: 600;
-  color: #1890ff;
+  color: #000000;
   font-size: 1.1rem;
 }
 
 .form-group input {
   width: 100%;
   padding: 1rem;
-  border: 2px solid rgba(24, 144, 255, 0.2);
+  border: 2px solid rgba(82, 196, 26, 0.3);
   border-radius: 12px;
   font-size: 1.1rem;
   transition: all 0.3s ease;
   direction: ltr;
   text-align: right;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #40a9ff;
-  box-shadow: 0 0 0 3px rgba(64, 169, 255, 0.2);
+  border-color: #aedf96;
+  box-shadow: 0 0 0 3px rgba(82, 196, 26, 0.2);
   background: rgba(255, 255, 255, 0.95);
   transform: translateY(-1px);
 }
@@ -138,7 +138,7 @@
 .submit-btn {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+  background: linear-gradient(135deg, #aedf96 0%, #aedf96 100%);
   color: white;
   border: none;
   border-radius: 15px;
@@ -146,13 +146,13 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(82, 196, 26, 0.4);
 }
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(24, 144, 255, 0.4);
-  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  box-shadow: 0 8px 24px rgba(82, 196, 26, 0.6);
+  background: linear-gradient(135deg, #aedf96 0%, #aedf96 100%);
 }
 
 .submit-btn:disabled {
@@ -202,18 +202,18 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 1.1rem;
-  border: 2px solid rgba(24, 144, 255, 0.2);
+  border: 2px solid rgba(82, 196, 26, 0.2);
 }
 
 .file-input:hover {
-  border-color: #40a9ff;
-  background: rgba(64, 169, 255, 0.1);
+  border-color: #aedf96;
+  background: rgba(82, 196, 26, 0.1);
   transform: translateY(-1px);
 }
 
 .loading {
   text-align: center;
-  color: #1890ff;
+  color: #aedf96;
   font-weight: 600;
   margin-top: 1rem;
   font-size: 1.1rem;
@@ -225,13 +225,13 @@
   backdrop-filter: blur(20px);
   padding: 2.5rem;
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(24, 144, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(82, 196, 26, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .files-section h2 {
   margin-top: 0;
-  color: #1890ff;
+  color: #aedf96;
   margin-bottom: 2rem;
   font-size: 1.8rem;
   font-weight: 600;
@@ -244,7 +244,7 @@
 }
 
 .file-card {
-  border: 2px solid rgba(24, 144, 255, 0.2);
+  border: 2px solid rgba(82, 196, 26, 0.2);
   border-radius: 16px;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.9);
@@ -254,8 +254,8 @@
 
 .file-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(24, 144, 255, 0.2);
-  border-color: #40a9ff;
+  box-shadow: 0 12px 24px rgba(82, 196, 26, 0.2);
+  border-color: #aedf96;
 }
 
 .file-info h3 {
@@ -286,7 +286,7 @@
 .download-btn {
   flex: 1;
   padding: 0.5rem;
-  background: #28a745;
+  background: #aedf96;
   color: white;
   border: none;
   border-radius: 4px;
