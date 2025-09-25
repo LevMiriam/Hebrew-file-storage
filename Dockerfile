@@ -24,8 +24,10 @@ RUN mkdir -p backend/build && cp -r frontend/build/* backend/build/
 # Create uploads directory
 RUN mkdir -p uploads
 
-# Expose backend port - Railway will override this with PORT env
-EXPOSE 3001
+# Expose PORT for Railway
+# Use $PORT in CMD to ensure we listen on Railway's assigned port
+# DO NOT specify a port here - Railway will set this in the environment
+EXPOSE $PORT
 
 # Start backend
 CMD ["node", "backend/index.js"]
