@@ -18,9 +18,19 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 // Database connection - Railway vs Local
 let pool;
 if (process.env.DATABASE_URL || process.env.POSTGRES_URL) {
-  // Railway/Production - use xxxxxction string only
+  // Railway/Production - use connection string only
   pool = new Pool({
     connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
+    ssl: { rejectUnauthorized: false }
+  });
+} else if (process.env.PGHOST) {
+  // Railway with individual PG env vars
+  pool = new Pool({
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT ? Number(process.env.PGPORT) : 5432,
     ssl: { rejectUnauthorized: false }
   });
 } else {
@@ -30,7 +40,7 @@ if (process.env.DATABASE_URL || process.env.POSTGRES_URL) {
     host: process.env.DB_HOST || 'postgres',  
     database: process.env.DB_NAME || 'fileapp',
     password: process.env.DB_PASSWORD || 'password123',
-    port: process.env.DB_PORT || 5432,
+    port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
     ssl: false
   });
 }
