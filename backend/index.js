@@ -32,24 +32,39 @@ if (process.env.DATABASE_URL || process.env.POSTGRES_URL) {
   console.log('������� PGDATABASE exists:', !!process.env.PGDATABASE);
   console.log('���� PGPORT exists:', !!process.env.PGPORT);
   
-  // Since we only have PGHOST, let's create a manual connection using Railway defaults
-  console.log('������ Creating manual Railway PostgreSQL connection with default credentials');
+  // Need to fetch or set the PostgreSQL credentials from Railway
+  console.log('⚠️ Need to set PostgreSQL credentials in Railway variables');
+  console.log('🔄 Building connection string from Railway internal hostname');
   
-  // Default Railway PostgreSQL credentials when using a serxxxxxxxxxxction
-  const defaultUser = 'postgres';
-  const defaultDB = 'railway';
-  const defaultPort = 5432;
+  // Build a connection string ourselves
+  let connString = `postgres://`;
   
+  // The default values for Railway PostgreSQL - but we'll need to set the password in Railway
+  const user = 'postgres';
+  const db = 'railway';
+  const port = 5432;
+  
+  console.log(`🔗 Creating DATABASE_URL in memory from PGHOST=${process.env.PGHOST}`);
+  
+  // Since Railway needs PGPASSWORD set as an environment variable, we'll show instructions in logs
+  console.log('⚠️ Please create PostgreSQL Variables in Railway:');
+  console.log('1. Go to your Railway dashboard → PostgreSQL service');
+  console.log('2. Click "Connect" → Copy the PostgreSQL Connection URL');
+  console.log('3. Extract the password from this URL');
+  console.log('4. Add PGPASSWORD variable to your app service in Railway');
+  
+  // Try a connection to Postgres without password - this will likely fail
+  // but it's better than hardcoding an incorrect password
   pool = new Pool({
-    user: defaultUser,
+    user: user,
     host: process.env.PGHOST,
-    database: defaultDB,
-    password: 'postgres', // Default when no password set
-    port: defaultPort,
+    database: db,
+    password: process.env.PGPASSWORD || '', // Use empty password if not set
+    port: port,
     ssl: { rejectUnauthorized: false }
   });
   
-  console.log(`���� Connection params: user=${defaultUser}, host=${process.env.PGHOST}, database=${defaultDB}, port=${defaultPort}, ssl=true`);
+  console.log(`🔄 Connection params: user=${user}, host=${process.env.PGHOST}, database=${db}, port=${port}, password=${process.env.PGPASSWORD ? 'provided' : 'MISSING'}, ssl=true`);
 } else {
   // Local Docker - use individual env vars
   pool = new Pool({
