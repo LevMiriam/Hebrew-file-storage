@@ -9,7 +9,12 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const app = express();
+
+// Get the PORT - Railway provides this automatically
 const PORT = process.env.PORT || 3001;
+console.log(`🚪 PORT environment variable: ${process.env.PORT || 'not set (using default 3001)'}`);
+
+// JWT Secret for authentication
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-for-development-only-change-in-production';
 
 // Set production environment for Railway
@@ -93,8 +98,24 @@ if (fs.existsSync(frontendBuildPath)) {
 
 // Create uploads directory if it doesn't exist
 const uploadDir = process.env.UPLOAD_DIR || './uploads';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+console.log(`📂 Setting up upload directory: ${uploadDir}`);
+try {
+  if (!fs.existsSync(uploadDir)) {
+    console.log(`📂 Creating upload directory: ${uploadDir}`);
+    fs.mkdirSync(uploadDir, { recursive: true });
+    console.log(`✅ Upload directory created successfully`);
+  } else {
+    console.log(`✅ Upload directory already exists`);
+  }
+  
+  // Check write permissions
+  const testFile = path.join(uploadDir, '.railway-test-file');
+  fs.writeFileSync(testFile, 'test');
+  fs.unlinkSync(testFile);
+  console.log(`✅ Upload directory is writable`);
+} catch (error) {
+  console.error(`❌ Error with upload directory: ${error.message}`);
+  // Don't fail startup, we'll handle upload errors at runtime
 }
 
 // Multer configuration for file uploads with Hebrew support
@@ -426,10 +447,17 @@ async function startServer() {
     
     await initDatabase();
     
+    // Add extra logging for port binding
+    console.log(`🔌 Attempting to bind server to port ${PORT}`);
+    console.log(`🌐 Process port: ${process.env.PORT}`);
+    console.log(`🌐 Effective port: ${PORT}`);
+    
     const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log(`���� Server running on http://localhost:${PORT}`);
-      console.log(`���� Upload directory: ${uploadDir}`);
-      console.log(`���� API available at http://localhost:${PORT}/api`);
+      console.log(`✅ Server bound and running on port ${PORT}`);
+      console.log(`📁 Upload directory: ${uploadDir}`);
+      console.log(`🔗 API available at http://localhost:${PORT}/api`);
+      console.log(`💻 Railway URL: ${process.env.RAILWAY_STATIC_URL || 'unknown'}`);
+      console.log(`🌐 PUBLIC_URL: ${process.env.PUBLIC_URL || 'unknown'}`);
     });
     
     // Handle server errors
