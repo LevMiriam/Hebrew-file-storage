@@ -47,9 +47,24 @@ PORT=3001
 2. לחץ על URL שRailway יוצר עבור האפליקציה
 3. נסה להירשם ולהתחבר
 
+## שלב מיוחד: הוספת PGPASSWORD
+במקרה שמופיעה שגיאת "password authentication failed for user postgres":
+1. לך לשירות PostgreSQL ב-Railway
+2. לחץ על "Connect" בתפריט העליון
+3. העתק את מחרוזת החיבור (Connection String)
+4. חלץ את הסיסמה מתוך המחרוזת (הערך שבין @ ל-/)
+   - מבנה כללי: `postgresql://postgres:PASSWORD@containers-us-west...`
+5. לך לשירות האפליקציה ב-Railway
+6. לחץ על "Variables"
+7. הוסף משתנה חדש:
+   - שם: `PGPASSWORD`
+   - ערך: הסיסמה שהעתקת
+8. לחץ "Add" והמתן ל-deploy חדש
+
 ## פתרון בעיות נפוצות:
 - אם יש שגיאת 500: בדוק את ה-logs בRailway
-- אם אין חיבור למסד: וודא ש-DATABASE_URL או לחלופין PGHOST, PGUSER וכו' מוגדרים
+- אם מופיעה שגיאת "password authentication failed": בצע את שלב הוספת PGPASSWORD למעלה
+- אם אין חיבור למסד: וודא ש-DATABASE_URL או לחלופין PGHOST, PGUSER, PGPASSWORD מוגדרים
 - אם מופיעה שגיאת "no PostgreSQL user name specified": וודא שהמשתנה PGUSER קיים והוא מוגדר נכון
 - אם האתר לא נטען: בדוק שה-PORT מוגדר כ-3001
 
