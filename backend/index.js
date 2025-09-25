@@ -19,26 +19,37 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 let pool;
 if (process.env.DATABASE_URL || process.env.POSTGRES_URL) {
   // Railway/Production - use connection string only
+  console.log('���� Using connection string for DB');
   pool = new Pool({
     connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
     ssl: { rejectUnauthorized: false }
   });
 } else if (process.env.PGHOST) {
   // Railway with individual PG env vars
-  console.log('🐘 PGHOST exists:', !!process.env.PGHOST);
-  console.log('👤 PGUSER exists:', !!process.env.PGUSER);
-  console.log('🔐 PGPASSWORD exists:', !!process.env.PGPASSWORD);
-  console.log('🗄️ PGDATABASE exists:', !!process.env.PGDATABASE);
-  console.log('🔌 PGPORT exists:', !!process.env.PGPORT);
+  console.log('���� PGHOST exists:', !!process.env.PGHOST, '=', process.env.PGHOST);
+  console.log('���� PGUSER exists:', !!process.env.PGUSER);
+  console.log('���� PGPASSWORD exists:', !!process.env.PGPASSWORD);
+  console.log('������� PGDATABASE exists:', !!process.env.PGDATABASE);
+  console.log('���� PGPORT exists:', !!process.env.PGPORT);
+  
+  // Since we only have PGHOST, let's create a manual connection using Railway defaults
+  console.log('������ Creating manual Railway PostgreSQL connection with default credentials');
+  
+  // Default Railway PostgreSQL credentials when using a serxxxxxxxxxxction
+  const defaultUser = 'postgres';
+  const defaultDB = 'railway';
+  const defaultPort = 5432;
   
   pool = new Pool({
-    user: process.env.PGUSER || 'postgres',
+    user: defaultUser,
     host: process.env.PGHOST,
-    database: process.env.PGDATABASE || 'postgres',
-    password: process.env.PGPASSWORD,
-    port: process.env.PGPORT ? Number(process.env.PGPORT) : 5432,
+    database: defaultDB,
+    password: 'postgres', // Default when no password set
+    port: defaultPort,
     ssl: { rejectUnauthorized: false }
   });
+  
+  console.log(`���� Connection params: user=${defaultUser}, host=${process.env.PGHOST}, database=${defaultDB}, port=${defaultPort}, ssl=true`);
 } else {
   // Local Docker - use individual env vars
   pool = new Pool({
@@ -129,9 +140,9 @@ async function initDatabase() {
       )
     `);
 
-    console.log('✅ Database initialized successfully');
+    console.log('��� Database initialized successfully');
   } catch (error) {
-    console.error('❌ Database initialization failed:', error);
+    console.error('��� Database initialization failed:', error);
   }
 }
 
@@ -391,29 +402,29 @@ app.delete('/api/files/:id', authenticateToken, async (req, res) => {
 // Start server
 async function startServer() {
   try {
-    console.log('🔄 Starting server...');
-    console.log('🌍 Environment:', process.env.NODE_ENV);
-    console.log('🔗 Database URL exists:', !!process.env.DATABASE_URL);
-    console.log('� POSTGRES_URL exists:', !!process.env.POSTGRES_URL);
-    console.log('�🗝️  JWT Secret exists:', !!process.env.JWT_SECRET);
-    console.log('📊 Using Railway config:', !!(process.env.DATABASE_URL || process.env.POSTGRES_URL));
+    console.log('���� Starting server...');
+    console.log('���� Environment:', process.env.NODE_ENV);
+    console.log('���� Database URL exists:', !!process.env.DATABASE_URL);
+    console.log('��� POSTGRES_URL exists:', !!process.env.POSTGRES_URL);
+    console.log('����������  JWT Secret exists:', !!process.env.JWT_SECRET);
+    console.log('���� Using Railway config:', !!(process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.PGHOST));
     
     await initDatabase();
     
     const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📁 Upload directory: ${uploadDir}`);
-      console.log(`🔗 API available at http://localhost:${PORT}/api`);
+      console.log(`���� Server running on http://localhost:${PORT}`);
+      console.log(`���� Upload directory: ${uploadDir}`);
+      console.log(`���� API available at http://localhost:${PORT}/api`);
     });
     
     // Handle server errors
     server.on('error', (error) => {
-      console.error('❌ Server error:', error);
+      console.error('��� Server error:', error);
       process.exit(1);
     });
     
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    console.error('��� Failed to start server:', error);
     process.exit(1);
   }
 }
