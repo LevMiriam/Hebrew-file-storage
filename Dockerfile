@@ -24,7 +24,7 @@ RUN mkdir -p backend/build && cp -r frontend/build/* backend/build/
 # Create uploads directory
 RUN mkdir -p uploads
 
-# Expose only backend port
+# Expose backend port - Railway will override this with PORT env
 EXPOSE 3001
 
 # Start backend
