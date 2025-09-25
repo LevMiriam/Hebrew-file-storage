@@ -378,7 +378,9 @@ async function startServer() {
     console.log('🔄 Starting server...');
     console.log('🌍 Environment:', process.env.NODE_ENV);
     console.log('🔗 Database URL exists:', !!process.env.DATABASE_URL);
-    console.log('🗝️  JWT Secret exists:', !!process.env.JWT_SECRET);
+    console.log('� POSTGRES_URL exists:', !!process.env.POSTGRES_URL);
+    console.log('�🗝️  JWT Secret exists:', !!process.env.JWT_SECRET);
+    console.log('📊 Using Railway config:', !!(process.env.DATABASE_URL || process.env.POSTGRES_URL));
     
     await initDatabase();
     
