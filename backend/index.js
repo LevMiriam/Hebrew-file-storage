@@ -25,10 +25,16 @@ if (process.env.DATABASE_URL || process.env.POSTGRES_URL) {
   });
 } else if (process.env.PGHOST) {
   // Railway with individual PG env vars
+  console.log('🐘 PGHOST exists:', !!process.env.PGHOST);
+  console.log('👤 PGUSER exists:', !!process.env.PGUSER);
+  console.log('🔐 PGPASSWORD exists:', !!process.env.PGPASSWORD);
+  console.log('🗄️ PGDATABASE exists:', !!process.env.PGDATABASE);
+  console.log('🔌 PGPORT exists:', !!process.env.PGPORT);
+  
   pool = new Pool({
-    user: process.env.PGUSER,
+    user: process.env.PGUSER || 'postgres',
     host: process.env.PGHOST,
-    database: process.env.PGDATABASE,
+    database: process.env.PGDATABASE || 'postgres',
     password: process.env.PGPASSWORD,
     port: process.env.PGPORT ? Number(process.env.PGPORT) : 5432,
     ssl: { rejectUnauthorized: false }
