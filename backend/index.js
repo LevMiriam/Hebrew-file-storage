@@ -10,21 +10,30 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-for-development-only-change-in-production';
 
 // Set production environment for Railway
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
-// Database connection
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  // Fallback to individual env vars for local docker
-  user: process.env.DB_USER || 'fileapp',
-  host: process.env.DB_HOST || 'postgres',  
-  database: process.env.DB_NAME || 'fileapp',
-  password: process.env.DB_PASSWORD || 'password123',
-  port: process.env.DB_PORT || 5432,
-});
+// Database connection - Railway vs Local
+let pool;
+if (process.env.DATABASE_URL || process.env.POSTGRES_URL) {
+  // Railway/Production - use xxxxxction string only
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
+    ssl: { rejectUnauthorized: false }
+  });
+} else {
+  // Local Docker - use individual env vars
+  pool = new Pool({
+    user: process.env.DB_USER || 'fileapp',
+    host: process.env.DB_HOST || 'postgres',  
+    database: process.env.DB_NAME || 'fileapp',
+    password: process.env.DB_PASSWORD || 'password123',
+    port: process.env.DB_PORT || 5432,
+    ssl: false
+  });
+}
 
 // Middleware
 app.use(cors());
@@ -119,7 +128,7 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: 'Access token required' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET || 'railway-jwt-secret-key-2025', (err, user) => {
+  jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
       return res.status(403).json({ error: 'Invalid token' });
     }
@@ -169,7 +178,7 @@ app.post('/api/auth/register', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, username: user.username },
-      process.env.JWT_SECRET || 'railway-jwt-secret-key-2025',
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -215,7 +224,7 @@ app.post('/api/auth/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, username: user.username },
-      process.env.JWT_SECRET || 'railway-jwt-secret-key-2025',
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -365,16 +374,30 @@ app.delete('/api/files/:id', authenticateToken, async (req, res) => {
 
 // Start server
 async function startServer() {
-  await initDatabase();
-  
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📁 Upload directory: ${uploadDir}`);
-    console.log(`🔗 API available at http://localhost:${PORT}/api`);
-  });
+  try {
+    console.log('🔄 Starting server...');
+    console.log('🌍 Environment:', process.env.NODE_ENV);
+    console.log('🔗 Database URL exists:', !!process.env.DATABASE_URL);
+    console.log('🗝️  JWT Secret exists:', !!process.env.JWT_SECRET);
+    
+    await initDatabase();
+    
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`📁 Upload directory: ${uploadDir}`);
+      console.log(`🔗 API available at http://localhost:${PORT}/api`);
+    });
+    
+    // Handle server errors
+    server.on('error', (error) => {
+      console.error('❌ Server error:', error);
+      process.exit(1);
+    });
+    
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
 }
 
-startServer().catch(error => {
-  console.error('Failed to start server:', error);
-  process.exit(1);
-});
+startServer();
